@@ -1,0 +1,115 @@
+/* --- ScholarChronicle About Page Signature CSS --- */
+
+:root {
+    --primary: #3d1f0f;      /* Deep Signature Brown */
+    --secondary: #c4a882;    /* Gold/Tan Accent */
+    --bg: #fdfaf5;           /* Creamy Background */
+    --text-muted: #6c757d;
+}
+
+/* 1. Heading Styles */
+.about-card h2 {
+    letter-spacing: -1px;
+}
+
+.about-card .underline-accent {
+    width: 60px;
+    height: 4px;
+    background: var(--secondary);
+    border-radius: 10px;
+    margin: 15px auto 0;
+}
+
+/* 2. Story Content */
+.story-text {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: var(--text-muted);
+}
+
+/* 3. Illustration/Rocket Box */
+.illustration-box {
+    padding: 50px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px dashed var(--secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.5s ease;
+    box-shadow: 0 15px 35px rgba(196, 168, 130, 0.1);
+}
+
+.illustration-box:hover {
+    transform: rotate(10deg) scale(1.05);
+    background: #fffdfa;
+    border-style: solid;
+}
+
+/* 4. Stats Section */
+.stat-box {
+    padding: 20px;
+    transition: 0.3s;
+    border-radius: 20px;
+}
+
+.stat-box:hover {
+    background: #fdfaf5;
+    transform: translateY(-5px);
+}
+
+.stat-box i {
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.stat-box:hover i {
+    transform: scale(1.2);
+    color: var(--primary) !important;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: block;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--secondary);
+}
+
+/* 5. Custom HR */
+.about-hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(196, 168, 130, 0.3), rgba(0, 0, 0, 0));
+    margin: 40px 0;
+}
+
+/* 6. Mobile Responsiveness */
+@media (max-width: 768px) {
+    .illustration-box {
+        padding: 30px;
+        margin-top: 30px;
+    }
+    
+    .about-card {
+        padding: 30px 20px !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
