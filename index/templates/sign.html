@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp - ScholarChronicle</title>
+    <link rel="stylesheet" href="{% static 'css/sign.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/slms_logo.jpeg' %}">
+</head>
+<body>
+    <div class="split-container">
+        
+        <div class="brand-side">
+            <div class="side-icons">
+        <div class="icon i1">🎓</div><div class="icon i2">📚</div>
+        <div class="icon i3">🔬</div><div class="icon i4">💡</div>
+        <div class="icon i5">🖋️</div><div class="icon i6">🌍</div>
+        <div class="icon i7">📖</div><div class="icon i8">📐</div>
+            </div>
+            
+            <div class="brand-content">
+                <h1>ScholarChronicle</h1>
+                <p>Start your journey with us. A modern platform for modern students.</p>
+                <div class="decorative-line"></div>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="register-card">
+                <h2>Register</h2>
+                <p>Create your account below</p>
+
+                <form method="POST" autocomplete="off">
+                    {% csrf_token %}
+                    
+                    <div class="input-group">
+                        <input type="text" name="username" required autocomplete="new-password">
+                        <label>Username</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" name="email" required autocomplete="new-password">
+                        <label>Email Address</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" name="roll_number" required autocomplete="new-password">
+                        <label>Roll Number (e.g., SC101)</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" required autocomplete="new-password">
+                        <label>Password</label>
+                    </div>
+
+                    {% if error %}
+                    <div class="error-box">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    
+                    <button type="submit" class="submit-btn">
+                        Register Now
+                    </button>
+                </form>
+
+                <div class="footer-links">
+                    <p>Already have an account? <a href="/login">Login here</a></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

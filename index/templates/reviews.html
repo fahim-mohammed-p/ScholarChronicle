@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reviews - ScholarChronicle{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reviews.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="floating-bg-container">
+    <i class="fa-brands fa-google social-icon icon-1"></i>
+    <i class="fa-brands fa-linkedin-in social-icon icon-2"></i>
+    <i class="fa-brands fa-instagram social-icon icon-3"></i>
+    <i class="fa-brands fa-x-twitter social-icon icon-4"></i>
+    <i class="fa-brands fa-facebook-f social-icon icon-5"></i>
+    <i class="fa-brands fa-github social-icon icon-6"></i>
+    <i class="fa-brands fa-youtube social-icon icon-7"></i>
+</div>
+
+<div class="container py-5" style="min-height: 80vh; position: relative; z-index: 1;">
+    <div class="text-center mb-5 mt-4">
+        <h2 class="fw-bold display-5" style="color: #3d1f0f;">
+            Available <span style="color: #c4a882;">Reviews</span>
+        </h2>
+    </div>
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 text-center py-5">
+            <div class="py-5">
+                <p class="fs-4 text-muted" style="opacity: 0.6; font-weight: 500;">
+                    No reviews scheduled at the moment.
+                </p>
+                <div class="mt-4">
+                   <i class="fa-solid fa-comment-slash fa-3x" style="color: #c4a882; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
