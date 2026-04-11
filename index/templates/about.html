@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - ScholarChronicle{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="profile-card p-5 animate__animated animate__fadeInUp">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold display-5" style="color: var(--primary);">
+                        Our <span style="color: var(--secondary);">Story</span>
+                    </h2>
+                    <div class="mt-2 mx-auto" style="width: 60px; height: 4px; background: var(--secondary); border-radius: 10px;"></div>
+                </div>
+
+                <div class="row align-items-center g-5">
+                    <div class="col-md-6">
+                        <h4 class="fw-bold mb-3" style="color: var(--primary);">ScholarChronicle</h4>
+                        <p class="text-muted" style="line-height: 1.8;">
+                            Leading the way in modern education with smart learning tools. We believe in empowering students through high-quality courses and a seamless learning experience.
+                        </p>
+                        <p class="text-muted" style="line-height: 1.8;">
+                            Our mission is to bridge the gap between passion and profession. Whether it's coding, science, or management, we provide the platform to grow your skills.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="p-4 rounded-circle d-inline-block" style="background: #fdfaf5; border: 2px dashed var(--secondary);">
+                            <i class="fa-solid fa-rocket fa-5x" style="color: var(--primary);"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5" style="opacity: 0.1;">
+
+                <div class="row text-center g-4">
+                    <div class="col-md-4">
+                        <i class="fa-solid fa-users fa-2x mb-3" style="color: var(--secondary);"></i>
+                        <h5 class="fw-bold">1000+</h5>
+                        <small class="text-muted">Active Students</small>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fa-solid fa-laptop-code fa-2x mb-3" style="color: var(--secondary);"></i>
+                        <h5 class="fw-bold">50+</h5>
+                        <small class="text-muted">Expert Courses</small>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fa-solid fa-certificate fa-2x mb-3" style="color: var(--secondary);"></i>
+                        <h5 class="fw-bold">Verified</h5>
+                        <small class="text-muted">Certifications</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

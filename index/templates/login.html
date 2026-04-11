@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ScholarChronicle</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/slms_logo.jpeg' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="bg-icons">
+        <div class="icon i1">🎓</div><div class="icon i2">📚</div>
+        <div class="icon i3">🔬</div><div class="icon i4">💡</div> 
+        <div class="icon i5">🖋️</div><div class="icon i6">🌍</div>
+        <div class="icon i7">📖</div><div class="icon i8">📐</div>
+        <div class="icon i9">🎨</div><div class="icon i10">📝</div>
+        <div class="icon i11">🦉</div><div class="icon i12">🏆</div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="login-card">
+            <div class="logo-area">
+                <h2>ScholarChronicle</h2>
+                <p>Welcome back, please login to your account</p>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-box" 
+                         style="padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 0.85rem; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; align-items: center; border-left: 5px solid #dc3545;">
+                        <i class="fa-solid fa-circle-exclamation text-danger me-2" style="color: #dc3545; margin-right: 10px;"></i>
+                        <strong style="color: #333;">{{ message }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="username" required autocomplete="new-password">
+                    <label>Username</label>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" name="password" required autocomplete="new-password">
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <span>Login</span>
+                </button>
+            </form>
+
+            <div class="footer-links">
+                <p>Don't have an account? <a href="{% url 'sign' %}">Register Now</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
