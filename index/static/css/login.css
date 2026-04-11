@@ -180,3 +180,77 @@ input:-webkit-autofill {
     50% { transform: translateX(6px); }
     75% { transform: translateX(-6px); }
 }
+
+
+/* 1. Message Box Logic (Green/Red Switch) */
+.alert-box {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    border-left: 5px solid #dc3545; /* Default Red for errors/ban */
+    transition: all 0.3s ease;
+}
+
+/* Green border for Success (Account Created) */
+.alert-box.alert-success {
+    border-left-color: #28a745 !important;
+}
+
+.alert-box i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.icon-success {
+    color: #28a745;
+}
+
+.icon-error {
+    color: #dc3545;
+}
+
+.message-text {
+    color: #333;
+    font-weight: 600;
+}
+
+/* 2. Floating Label Fix (To avoid overlap during autofill) */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid #d7ccc8;
+    outline: none;
+    background: transparent;
+    transition: 0.3s;
+}
+
+.input-group label {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    color: #a1887f;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+/* Logic for labels to float up */
+.input-group input:focus ~ label,
+.input-group input:valid ~ label {
+    top: -15px;
+    left: 0;
+    color: #3e2723;
+    font-size: 0.8rem;
+    font-weight: bold;
+}

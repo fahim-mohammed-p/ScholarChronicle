@@ -17,7 +17,7 @@ def sign_view(request):
 
         user = User.objects.create_user(username=u_name, password=p_word, email=email)
         studentProfile.objects.create(user=user, roll_number=roll)
-        messages.success(request, "Account created! Please login.")
+        messages.success(request, "Account created successfully!")
         return redirect('login')
     return render(request, 'sign.html')
 
