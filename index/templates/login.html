@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ScholarChronicle</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v=1.3">
     <link rel="icon" type="image/png" href="{% static 'images/slms_logo.jpeg' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -27,20 +27,7 @@
                 <p>Welcome back, please login to your account</p>
             </div>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert-box {% if message.tags == 'success' %}alert-success{% endif %}">
-                        
-                        {% if message.tags == 'success' %}
-                            <i class="fa-solid fa-circle-check icon-success"></i>
-                        {% else %}
-                            <i class="fa-solid fa-circle-exclamation icon-error"></i>
-                        {% endif %}
-                        
-                        <span class="message-text">{{ message }}</span>
-                    </div>
-                {% endfor %}
-            {% endif %}
+
 
             <form method="POST">
                 {% csrf_token %}
@@ -65,5 +52,57 @@
         </div>
     </div>
 
+    <!-- Django Messages Container (Safe for JS parsing) -->
+    {% if messages %}
+    <ul id="django-messages" style="display: none;">
+        {% for message in messages %}
+            <li data-tags="{{ message.tags|default:'' }}">{{ message.message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <script>
+        function showToast(message, tags) {
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            
+            let bg = "linear-gradient(to right, #2193b0, #6dd5ed)"; // Default Blue
+            const text = message.toLowerCase();
+            
+            if (text.includes('ban') || text.includes('banned') || text.includes('exists') || text.includes('exist') || tags === 'warning') {
+                bg = "linear-gradient(to right, #f39c12, #f1c40f)"; // Orange/Yellow
+            } else if (tags === 'success' || text.includes('success')) {
+                bg = "linear-gradient(to right, #11998e, #38ef7d)"; // Vibrant Green
+            } else if (tags === 'error' || tags === 'danger' || text.includes('invalid') || text.includes('wrong') || text.includes('incorrect') || text.includes('failed')) {
+                bg = "linear-gradient(to right, #ff416c, #ff4b2b)"; // Vibrant Red
+            }
+            
+            toast.style.background = bg;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4500);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const messageList = document.querySelectorAll('#django-messages li');
+            messageList.forEach(li => {
+                showToast(li.textContent, li.getAttribute('data-tags'));
+            });
+        });
+    </script>
 </body>
 </html>

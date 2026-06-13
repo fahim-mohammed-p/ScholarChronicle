@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="{% static 'images/slms_logo.jpeg' %}">
     
-    <link rel="stylesheet" href="{% static 'css/adbase.css' %}">
+    <link rel="stylesheet" href="{% static 'css/adbase.css' %}?v=1.3">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -56,7 +56,113 @@
         </main>
     </div>
 
+    <!-- Django Messages Container (Safe for JS parsing) -->
+    {% if messages %}
+    <ul id="django-messages" style="display: none;">
+        {% for message in messages %}
+            <li data-tags="{{ message.tags|default:'' }}">{{ message.message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Native Toasts Script -->
+    <script>
+        function showToast(message, tags) {
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            
+            let bg = "linear-gradient(to right, #2193b0, #6dd5ed)"; // Default Blue
+            const text = message.toLowerCase();
+            
+            if (text.includes('ban') || text.includes('banned') || text.includes('exists') || text.includes('exist') || tags === 'warning') {
+                bg = "linear-gradient(to right, #f39c12, #f1c40f)"; // Orange/Yellow
+            } else if (tags === 'success' || text.includes('success')) {
+                bg = "linear-gradient(to right, #11998e, #38ef7d)"; // Vibrant Green
+            } else if (tags === 'error' || tags === 'danger' || text.includes('invalid') || text.includes('wrong') || text.includes('incorrect') || text.includes('failed')) {
+                bg = "linear-gradient(to right, #ff416c, #ff4b2b)"; // Vibrant Red
+            }
+            
+            toast.style.background = bg;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4500);
+        }
+
+        function showConfirmDialog(message, callback) {
+            let overlay = document.querySelector('.custom-confirm-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.className = 'custom-confirm-overlay';
+                overlay.innerHTML = `
+                    <div class="custom-confirm-card">
+                        <h3>Confirmation</h3>
+                        <p id="confirm-msg"></p>
+                        <div class="confirm-actions">
+                            <button class="confirm-btn confirm-cancel">Cancel</button>
+                            <button class="confirm-btn confirm-proceed">Yes, Proceed</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+            
+            overlay.querySelector('#confirm-msg').textContent = message;
+            overlay.style.display = 'flex';
+            
+            const cancelBtn = overlay.querySelector('.confirm-cancel');
+            const proceedBtn = overlay.querySelector('.confirm-proceed');
+            
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            const newProceedBtn = proceedBtn.cloneNode(true);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+            proceedBtn.parentNode.replaceChild(newProceedBtn, proceedBtn);
+            
+            newCancelBtn.addEventListener('click', () => {
+                overlay.style.display = 'none';
+            });
+            
+            newProceedBtn.addEventListener('click', () => {
+                overlay.style.display = 'none';
+                callback();
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const messageList = document.querySelectorAll('#django-messages li');
+            messageList.forEach(li => {
+                showToast(li.textContent, li.getAttribute('data-tags'));
+            });
+
+            // Global click listener to intercept native confirm messages and show custom dialogs
+            document.body.addEventListener('click', function(e) {
+                const trigger = e.target.closest('[data-confirm]');
+                if (trigger) {
+                    e.preventDefault();
+                    const message = trigger.getAttribute('data-confirm');
+                    const targetUrl = trigger.getAttribute('href');
+                    showConfirmDialog(message, function() {
+                        window.location.href = targetUrl;
+                    });
+                }
+            });
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

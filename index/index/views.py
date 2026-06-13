@@ -10,15 +10,58 @@ def home(request):
 
 def sign_view(request):
     if request.method == 'POST':
-        u_name = request.POST['username']
-        p_word = request.POST['password']
-        email = request.POST['email']
-        roll = request.POST['roll_number']
+        u_name = request.POST.get('username', '').strip()
+        p_word = request.POST.get('password', '')
+        email = request.POST.get('email', '').strip()
+        roll = request.POST.get('roll_number', '').strip()
 
-        user = User.objects.create_user(username=u_name, password=p_word, email=email)
-        studentProfile.objects.create(user=user, roll_number=roll)
-        messages.success(request, "Account created successfully!")
-        return redirect('login')
+        # Validation checks for unique identity conditions (username, email, roll number)
+        if not u_name or not p_word or not email or not roll:
+            return render(request, 'sign.html', {
+                'error': 'All fields are required.',
+                'username': u_name,
+                'email': email,
+                'roll_number': roll,
+                'password': p_word
+            })
+
+        duplicates = []
+        if User.objects.filter(username__iexact=u_name).exists():
+            duplicates.append('username')
+        if User.objects.filter(email__iexact=email).exists() or studentProfile.objects.filter(email__iexact=email).exists():
+            duplicates.append('email')
+        if studentProfile.objects.filter(roll_number__iexact=roll).exists():
+            duplicates.append('roll number')
+
+        if duplicates:
+            if len(duplicates) == 1:
+                err_msg = f"{duplicates[0].capitalize()} already exists"
+            elif len(duplicates) == 2:
+                err_msg = f"{duplicates[0].capitalize()} & {duplicates[1]} already exist"
+            else:
+                err_msg = f"{duplicates[0].capitalize()}, {duplicates[1]} & {duplicates[2]} already exist"
+
+            return render(request, 'sign.html', {
+                'error': err_msg,
+                'username': u_name,
+                'email': email,
+                'roll_number': roll,
+                'password': p_word
+            })
+
+        try:
+            user = User.objects.create_user(username=u_name, password=p_word, email=email)
+            studentProfile.objects.create(user=user, email=email, roll_number=roll)
+            messages.success(request, "Account created successfully!")
+            return redirect('login')
+        except Exception as e:
+            return render(request, 'sign.html', {
+                'error': f'Registration failed: {str(e)}',
+                'username': u_name,
+                'email': email,
+                'roll_number': roll,
+                'password': p_word
+            })
     return render(request, 'sign.html')
 
 
@@ -54,7 +97,7 @@ def login_view(request):
 
     return render(request, 'login.html')
 
-@login_required
+@login_required(login_url='login')
 def profile_view(request):
     profile, created = studentProfile.objects.get_or_create(user=request.user)
     user_courses = entrollment.objects.filter(user=request.user)
@@ -68,13 +111,33 @@ def profile_view(request):
             messages.success(request, 'Avatar updated!')
             return redirect('profile')
 
-        profile.full_name = request.POST.get('first_name')
-        profile.email = request.POST.get('email')
-        profile.roll_number = request.POST.get('roll_number')
-        profile.phone = request.POST.get('phone')
+        f_name = request.POST.get('first_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        roll = request.POST.get('roll_number', '').strip()
+        phone = request.POST.get('phone', '').strip()
 
+        # Validation checks
+        if not email or not roll:
+            messages.error(request, 'Email and Roll number are required.')
+            return redirect('profile')
 
-        request.user.email = request.POST.get('email')
+        # Check for unique email across other users
+        if User.objects.filter(email__iexact=email).exclude(id=request.user.id).exists() or \
+           studentProfile.objects.filter(email__iexact=email).exclude(user=request.user).exists():
+            messages.error(request, 'Email already exists!')
+            return redirect('profile')
+
+        # Check for unique roll number across other profiles
+        if studentProfile.objects.filter(roll_number__iexact=roll).exclude(user=request.user).exists():
+            messages.error(request, 'Roll number already exists!')
+            return redirect('profile')
+
+        profile.full_name = f_name
+        profile.email = email
+        profile.roll_number = roll
+        profile.phone = phone
+
+        request.user.email = email
         request.user.save()
 
         profile.save()
@@ -115,9 +178,15 @@ def drop_course(request, course_id):
     messages.warning(request, f"Course dropped: {course_obj.title}")
     return redirect('courses')
 
-@login_required
+# @login_required
+# def reviews_view(request):
+#     return render(request, 'reviews.html')
+
 def reviews_view(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     return render(request, 'reviews.html')
+
 
 
 def about_view(request):
@@ -139,19 +208,35 @@ def admin_dash(request):
         messages.error(request, 'Only admin can access!')
         return redirect('login')
     
+    from django.db.models import Count
     total_users = User.objects.count()
     total_courses = courses.objects.count()
 
     all_users = studentProfile.objects.all()
-    all_courses = courses.objects.all()
+    all_courses = courses.objects.annotate(enrollment_count=Count('entrollment'))
     recent_entrollments = entrollment.objects.count()
 
-    context={
+    # Prepare data for Chart.js
+    chart_labels = ["Total Students", "Active Courses", "Enrollments"]
+    chart_data = [total_users, total_courses, recent_entrollments]
+
+    # Per-course enrollment data for the doughnut chart
+    course_labels = []
+    course_data = []
+    for c in all_courses:
+        course_labels.append(c.title)
+        course_data.append(c.enrollment_count)
+
+    context = {
         'total_users': total_users,
         'total_courses': total_courses,
         'all_users': all_users,
-        'all_courses':all_courses,
-        'recent_entrollments':recent_entrollments
+        'all_courses': all_courses,
+        'recent_entrollments': recent_entrollments,
+        'chart_labels': chart_labels,
+        'chart_data': chart_data,
+        'course_labels': course_labels,
+        'course_data': course_data,
     }
     return render(request, 'admin/admindash.html', context)
 

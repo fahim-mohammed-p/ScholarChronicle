@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SignUp - ScholarChronicle</title>
-    <link rel="stylesheet" href="{% static 'css/sign.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sign.css' %}?v=1.3">
     <link rel="icon" type="image/png" href="{% static 'images/slms_logo.jpeg' %}">
 </head>
 <body>
@@ -35,30 +35,26 @@
                     {% csrf_token %}
                     
                     <div class="input-group">
-                        <input type="text" name="username" required autocomplete="new-password">
+                        <input type="text" name="username" required autocomplete="new-password" value="{{ username|default:'' }}">
                         <label>Username</label>
                     </div>
 
                     <div class="input-group">
-                        <input type="email" name="email" required autocomplete="new-password">
+                        <input type="email" name="email" required autocomplete="new-password" value="{{ email|default:'' }}">
                         <label>Email Address</label>
                     </div>
 
                     <div class="input-group">
-                        <input type="text" name="roll_number" required autocomplete="new-password">
+                        <input type="text" name="roll_number" required autocomplete="new-password" value="{{ roll_number|default:'' }}">
                         <label>Roll Number (e.g., SC101)</label>
                     </div>
 
                     <div class="input-group">
-                        <input type="password" name="password" required autocomplete="new-password">
+                        <input type="password" name="password" required autocomplete="new-password" value="{{ password|default:'' }}">
                         <label>Password</label>
                     </div>
 
-                    {% if error %}
-                    <div class="error-box">
-                        {{ error }}
-                    </div>
-                    {% endif %}
+
                     
                     <button type="submit" class="submit-btn">
                         Register Now
@@ -72,5 +68,82 @@
         </div>
 
     </div>
+    <!-- Registration Configuration & Django Messages Containers (Safe for JS parsing) -->
+    <div id="registration-config"
+         data-error="{{ error|default:'' }}"
+         data-has-error="{% if error %}true{% else %}false{% endif %}"
+         style="display: none;">
+    </div>
+
+    {% if messages %}
+    <ul id="django-messages" style="display: none;">
+        {% for message in messages %}
+            <li data-tags="{{ message.tags|default:'' }}">{{ message.message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <script>
+        function showToast(message, tags) {
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            
+            let bg = "linear-gradient(to right, #2193b0, #6dd5ed)"; // Default Blue
+            const text = message.toLowerCase();
+            
+            if (text.includes('ban') || text.includes('banned') || text.includes('exists') || text.includes('exist') || tags === 'warning') {
+                bg = "linear-gradient(to right, #f39c12, #f1c40f)"; // Orange/Yellow
+            } else if (tags === 'success' || text.includes('success')) {
+                bg = "linear-gradient(to right, #11998e, #38ef7d)"; // Vibrant Green
+            } else if (tags === 'error' || tags === 'danger' || text.includes('invalid') || text.includes('wrong') || text.includes('incorrect') || text.includes('failed')) {
+                bg = "linear-gradient(to right, #ff416c, #ff4b2b)"; // Vibrant Red
+            }
+            
+            toast.style.background = bg;
+            toast.innerHTML = `
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4500);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const configEl = document.getElementById('registration-config');
+            const hasError = configEl ? configEl.getAttribute('data-has-error') === 'true' : false;
+            const errorMsg = configEl ? configEl.getAttribute('data-error') : '';
+
+            // Explicitly clear all fields on clean load (no error) to prevent browser cache/restoration from keeping old data
+            if (!hasError) {
+                document.querySelectorAll('form input').forEach(input => {
+                    if (input.type !== 'hidden') {
+                        input.value = '';
+                    }
+                });
+            }
+
+            // Show Django messages if any
+            const messageList = document.querySelectorAll('#django-messages li');
+            messageList.forEach(li => {
+                showToast(li.textContent, li.getAttribute('data-tags'));
+            });
+
+            // Show registration validation error if any
+            if (hasError && errorMsg) {
+                showToast(errorMsg, "error");
+            }
+        });
+    </script>
 </body>
 </html>

@@ -13,7 +13,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.3">
         <link rel="icon" type="image/png" href="{% static 'images/slms_logo.jpeg' %}">
         
     </head>
@@ -123,6 +123,60 @@
     </div>
 </footer>
 
+        <!-- Django Messages Container (Safe for JS parsing) -->
+        {% if messages %}
+        <ul id="django-messages" style="display: none;">
+            {% for message in messages %}
+                <li data-tags="{{ message.tags|default:'' }}">{{ message.message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <!-- Custom Native Toasts Script -->
+        <script>
+            function showToast(message, tags) {
+                let container = document.querySelector('.toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'toast-container';
+                    document.body.appendChild(container);
+                }
+
+                const toast = document.createElement('div');
+                toast.className = 'custom-toast';
+                
+                let bg = "linear-gradient(to right, #2193b0, #6dd5ed)"; // Default Blue
+                const text = message.toLowerCase();
+                
+                if (text.includes('ban') || text.includes('banned') || text.includes('exists') || text.includes('exist') || tags === 'warning') {
+                    bg = "linear-gradient(to right, #f39c12, #f1c40f)"; // Orange/Yellow
+                } else if (tags === 'success' || text.includes('success')) {
+                    bg = "linear-gradient(to right, #11998e, #38ef7d)"; // Vibrant Green
+                } else if (tags === 'error' || tags === 'danger' || text.includes('invalid') || text.includes('wrong') || text.includes('incorrect') || text.includes('failed')) {
+                    bg = "linear-gradient(to right, #ff416c, #ff4b2b)"; // Vibrant Red
+                }
+                
+                toast.style.background = bg;
+                toast.innerHTML = `
+                    <span>${message}</span>
+                    <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+                `;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 4500);
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                const messageList = document.querySelectorAll('#django-messages li');
+                messageList.forEach(li => {
+                    showToast(li.textContent, li.getAttribute('data-tags'));
+                });
+            });
+        </script>
     </body>
 </html>

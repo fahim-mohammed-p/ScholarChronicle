@@ -181,76 +181,57 @@ input:-webkit-autofill {
     75% { transform: translateX(-6px); }
 }
 
-
-/* 1. Message Box Logic (Green/Red Switch) */
-.alert-box {
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    font-size: 0.85rem;
-    background: #fff;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+/* Custom Native Toasts Styling */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.custom-toast {
+    min-width: 280px;
+    max-width: 400px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    border-left: 5px solid #dc3545; /* Default Red for errors/ban */
-    transition: all 0.3s ease;
+    gap: 15px;
+    animation: slideInRight 0.3s ease forwards, fadeOut 0.5s ease 4s forwards;
 }
-
-/* Green border for Success (Account Created) */
-.alert-box.alert-success {
-    border-left-color: #28a745 !important;
-}
-
-.alert-box i {
-    margin-right: 10px;
-    font-size: 1.1rem;
-}
-
-.icon-success {
-    color: #28a745;
-}
-
-.icon-error {
-    color: #dc3545;
-}
-
-.message-text {
-    color: #333;
-    font-weight: 600;
-}
-
-/* 2. Floating Label Fix (To avoid overlap during autofill) */
-.input-group {
-    position: relative;
-    margin-bottom: 25px;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 10px 0;
-    font-size: 1rem;
+.toast-close {
+    background: none;
     border: none;
-    border-bottom: 2px solid #d7ccc8;
-    outline: none;
-    background: transparent;
-    transition: 0.3s;
+    color: rgba(255,255,255,0.7);
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
 }
-
-.input-group label {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    color: #a1887f;
-    pointer-events: none;
-    transition: 0.3s;
+.toast-close:hover {
+    color: #fff;
 }
-
-/* Logic for labels to float up */
-.input-group input:focus ~ label,
-.input-group input:valid ~ label {
-    top: -15px;
-    left: 0;
-    color: #3e2723;
-    font-size: 0.8rem;
-    font-weight: bold;
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+    }
 }

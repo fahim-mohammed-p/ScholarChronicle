@@ -9,14 +9,7 @@
 
 {% block content %}
 <div class="container py-4">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 15px;">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+
 
     <div class="mb-5">
         <h2 class="fw-bold page-title">Student <span class="highlight">Management</span></h2>
@@ -70,7 +63,7 @@
                         <td class="text-end">
                             <a href="{% url 'toggle_ban' profile.id %}" 
                                class="btn-toggle {% if profile.is_banned %}btn-unban{% else %}btn-ban{% endif %}"
-                               onclick="return confirm('Are you sure you want to {% if profile.is_banned %}Unban{% else %}Ban{% endif %} this student?')">
+                               data-confirm="Are you sure you want to {% if profile.is_banned %}Unban{% else %}Ban{% endif %} this student?">
                                 {% if profile.is_banned %}
                                     <i class="fa-solid fa-user-check me-1"></i> Unban
                                 {% else %}
